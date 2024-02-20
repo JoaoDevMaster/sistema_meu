@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário com Data Pré-Preenchida</title>
+</head>
+<body>
+    <div class="mb-3">
+        <label for="data_lancamento">Data de Lançamento:</label>
+        <!-- Utilizei a função new Date().toISOString().substr(0,10) para obter a data atual no formato ISO (AAAA-MM-DD) -->
+        <input type="date" id="data_lancamento" name="data_lancamento" class="form-control" value="${new Date().toISOString().substr(0,10)}" required>
+    </div>
+
+    <script>
+        // Essa parte do código permite que o input da data seja preenchido com a data atual.
+        // Ela utiliza a função new Date() para obter a data atual em formato de objeto Date,
+        // e então converte essa data para uma string no formato ISO (AAAA-MM-DD) usando toISOString(),
+        // e finalmente utiliza substr(0,10) para pegar apenas a parte referente à data.
+        // Essa string é então definida como o valor inicial do input.
+        document.getElementById("data_lancamento").value = new Date().toISOString().substr(0,10);
+    </script>
+</body>
+</html>

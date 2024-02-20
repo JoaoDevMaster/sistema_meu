@@ -1,0 +1,505 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>João Transações</title>
+  <link rel="stylesheet" href="static/styles.css">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap" rel="stylesheet">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  <link rel="shortcut icon" href="/static/favicon_io/favicon.ico" type="image/x-icon">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <style>
+    .bg-black-dark{
+    background-color: #121212;
+    color: white;
+}
+    a:hover{
+    color: white;
+    text-decoration: none;
+}
+          body {
+          background-color: #110070;
+          color: #fff;
+          font-family: 'Arial', sans-serif;
+      }
+
+      a {
+          color: white;
+          text-decoration: none;
+      }
+
+.link_nav_active{
+  background-color: #00ff91;
+}
+    /* Estilo para a barra lateral */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      padding: 48px 0 0;
+      margin-top: auto;
+      box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+    }
+
+    /* Estilo para o conteúdo principal */
+    .content {
+      margin-left: 250px;
+      padding: 20px;
+    }
+
+    /* Estilos específicos para dispositivos móveis */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        position: relative;
+        padding-top: 56px; /* Ajuste conforme necessário */
+      }
+      .content {
+        margin-left: 0;
+        padding: 10px;
+      }
+      /* Outros ajustes de estilo */
+    }
+  </style>
+
+<!-- SCRIPTS -->
+<script>
+    function openModal() {
+        document.getElementById('addTransactionModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('addTransactionModal').style.display = 'none';
+    }
+
+    function openFilterModal() {
+        document.getElementById('filterModal').style.display = 'flex';
+    }
+
+    function closeFilterModal() {
+        document.getElementById('filterModal').style.display = 'none';
+    }
+
+
+    
+    // Close modais ao clicar fora da área do modal
+    window.onclick = function (event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+        }
+    };
+
+// Adiciona classes condicionais com base no valor do saldo
+var saldo = parseFloat(document.getElementById('saldo').innerText);
+var saldoCard = document.getElementById('saldoCard');
+var receitasCard = document.getElementById('receitasCard');
+var despesasCard = document.getElementById('despesasCard');
+
+if (saldo > 0) {
+    saldoCard.classList.add('positive');
+    receitasCard.style.fill = '#00ffbf';  // Altera a cor para verde
+    despesasCard.style.fill = '#ff0044';   // Altera a cor para vermelho
+} else if (saldo < 0) {
+    saldoCard.classList.add('negative');
+    receitasCard.style.fill = '#00ffbf';  // Altera a cor para verde
+    despesasCard.style.fill = '#ff0044';   // Altera a cor para vermelho
+} else {
+    saldoCard.classList.add('zero');
+    receitasCard.style.fill = '#8c00ff';  // Mantém a cor roxa
+    despesasCard.style.fill = '#8c00ff';  // Mantém a cor roxa
+}
+
+</script>
+</head>
+<body>
+
+<!-- Adicione este conteúdo dentro do seu formulário principal -->
+<div class="buttons_positions">
+
+
+    <a href="/exportar_pdf"><button class="button_position" title="Exportar Transações"><i class='bx bx-export'></i></button></a>
+    <button class="button_position" title="Filtrar" data-bs-toggle="offcanvas" data-bs-target="#filter" aria-controls="filter"><i class='bx bx-search'></i></button>
+    <button class="button_position" title="Adicionar Transação" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling"><i class='bx bx-plus-medical'></i></button>
+
+</div>
+  <div class="container-fluid">
+    <div class="row">
+
+
+      <!-- Barra lateral -->
+      <nav class="col-md-3 col-lg-2 d-md-block  sidebar">
+    <div class="logo_nav">
+        <img src="/static/logo.png" style="height:150px" alt="">
+    </div>
+    <div class="sidebar-sticky">
+        <ul class="nav flex-column">
+            <div class="d-flex links_nav icon_active">
+                <a href="{{ url_for('index') }}" title="Dashboard">
+                    <i class='bx bx-home icon-side'></i>
+                    <span>Dashboard</span>
+                </a>
+            </div>
+
+            <div class="d-flex links_nav ">
+                <a href="{{ url_for('tabela') }}" title="Transações">
+                    <i class='bx bx-wallet icon-side'></i>
+                    <span>Transações</span>
+                </a>
+            </div>
+
+            <div class="d-flex links_nav">
+                <a href="/pessoas_empresas" title="Pessoas Ou Empresas">
+                    <i class='bx bx-user-pin icon-side'></i>
+                    <span>Pessoas</span>
+                </a>
+            </div>
+
+            <div class="d-flex links_nav">
+                <a href="/templates" title="Templates">
+                    <i class='bx bx-file icon-side'></i>
+                    <span>Templates</span>
+                </a>
+            </div>
+
+  
+        </ul>
+    </div>
+</nav>
+
+
+      <!-- Conteúdo principal -->
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 content">
+  
+          
+
+        <div class=" header">Transações <a href=""><button class=" btn-reaload" style="background-color: blue;border-radius: 50%;border: none;height: 50px;font-size: 40px;color:white;width: 50px;height:50px; text-align: center;" title="Exportar Transações"><i class='bx bx-refresh'></i></button></a></div>
+        <br>
+        <div class='row dashboard-cards text-dark' style="color: black;">
+            <div class='card col-md-4'>
+              <div class='card-title'>
+                <h1 style="color: black;">
+                    Receitas <span class="ml-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" style="height: 30px;box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#00d9bf" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM135.1 217.4l107.1-99.9c3.8-3.5 8.7-5.5 13.8-5.5s10.1 2 13.8 5.5l107.1 99.9c4.5 4.2 7.1 10.1 7.1 16.3c0 12.3-10 22.3-22.3 22.3H304v96c0 17.7-14.3 32-32 32H240c-17.7 0-32-14.3-32-32V256H150.3C138 256 128 246 128 233.7c0-6.2 2.6-12.1 7.1-16.3z"/></svg>
+                      </span>
+                </h1>
+                <span class="value">
+                 <h4 style="color:#00d9bf ;"> <span class="text-dark">R$</span> {{ total_receitas }}</h4>
+               </span>
+              </div>
+            </div>
+            <div class='card col-md-4'>
+                <div class='card-title'>
+                  <h1 style="color: black;">
+                      Depesas <span class="ml-1">
+                        <svg xmlns="http://www.w3.org/2000/svg"  style="height: 30px;box-shadow: rgba(7, 255, 197, 0.2) 0px 7px 29px 0px;"viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#ff0000"  d="M256 0a256 256 0 1 0 0 512A256 256 0 1 0 256 0zM376.9 294.6L269.8 394.5c-3.8 3.5-8.7 5.5-13.8 5.5s-10.1-2-13.8-5.5L135.1 294.6c-4.5-4.2-7.1-10.1-7.1-16.3c0-12.3 10-22.3 22.3-22.3l57.7 0 0-96c0-17.7 14.3-32 32-32l32 0c17.7 0 32 14.3 32 32l0 96 57.7 0c12.3 0 22.3 10 22.3 22.3c0 6.2-2.6 12.1-7.1 16.3z"/></svg> 
+                      </span>
+                  </h1>
+                  <span class="value">
+                  <h4 style="color:#ff0000 ;"> <span class="text-dark">R$</span> {{ total_despesas }}</h4>
+
+                  </span>
+                </div>
+              </div>
+              <div class='card col-md-4'>
+                <div class='card-title'>
+                  <h1 style="color: black;">
+                      Total <span class="ml-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" style="height: 30px;" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#4c00ff" d="M156.6 384.9L125.7 354c-8.5-8.5-11.5-20.8-7.7-32.2c3-8.9 7-20.5 11.8-33.8L24 288c-8.6 0-16.6-4.6-20.9-12.1s-4.2-16.7 .2-24.1l52.5-88.5c13-21.9 36.5-35.3 61.9-35.3l82.3 0c2.4-4 4.8-7.7 7.2-11.3C289.1-4.1 411.1-8.1 483.9 5.3c11.6 2.1 20.6 11.2 22.8 22.8c13.4 72.9 9.3 194.8-111.4 276.7c-3.5 2.4-7.3 4.8-11.3 7.2v82.3c0 25.4-13.4 49-35.3 61.9l-88.5 52.5c-7.4 4.4-16.6 4.5-24.1 .2s-12.1-12.2-12.1-20.9V380.8c-14.1 4.9-26.4 8.9-35.7 11.9c-11.2 3.6-23.4 .5-31.8-7.8zM384 168a40 40 0 1 0 0-80 40 40 0 1 0 0 80z"/></svg>
+                      </span>
+                  </h1>
+                  <span class="value">
+                    <h4 style="color:#4c00ff ;"> <span class="text-dark">R$</span> {{ total }}</h4>
+
+               </span>
+                </div>
+              </div>
+
+          </div>
+          
+          <br>
+
+        <div class="table-responsive">
+          <table class="table table-striped bg-light text-center">
+            <thead >
+                <tr style="color: #4c00ff;">
+                    <th style="color: #4c00ff;"><span>ID</span>
+                    <th style="color: #4c00ff;"><span>Nome</span></th>
+                    <th style="color: #4c00ff;"><span>Tipo</span></th>
+                    <th style="color: #4c00ff;"><span>Valor</span></th>
+                    <th style="color: #4c00ff;"><span>Data lanc</span></th>
+                    <th style="color: #4c00ff;"><span>Observação</span></th>
+                    <th style="color: #4c00ff;"><span>Referente</span></th>
+                    <th style="color: #4c00ff;"><span>Forma de Pag.</span></th>
+                    <th style="color: #4c00ff;"><span>Ação</span></th>
+
+
+
+                </tr>
+            </thead>
+            <tbody>
+   
+
+                {% for transacao in transacoes %}
+                <tr>
+                    <td>{{ transacao[0] }}</td>
+                    <td>{{ transacao[1] }}</td>                    
+                    <td>
+                        {% if transacao[2] == 'Receita' %}
+                            <svg xmlns="http://www.w3.org/2000/svg" style="height: 20px;box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#00d9bf" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM135.1 217.4l107.1-99.9c3.8-3.5 8.7-5.5 13.8-5.5s10.1 2 13.8 5.5l107.1 99.9c4.5 4.2 7.1 10.1 7.1 16.3c0 12.3-10 22.3-22.3 22.3H304v96c0 17.7-14.3 32-32 32H240c-17.7 0-32-14.3-32-32V256H150.3C138 256 128 246 128 233.7c0-6.2 2.6-12.1 7.1-16.3z"/></svg>
+                        {% elif transacao[2] == 'Despesa' %}
+                        <svg xmlns="http://www.w3.org/2000/svg"  style="height: 20px;box-shadow: rgba(7, 255, 197, 0.2) 0px 7px 29px 0px;"viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#ff0000"  d="M256 0a256 256 0 1 0 0 512A256 256 0 1 0 256 0zM376.9 294.6L269.8 394.5c-3.8 3.5-8.7 5.5-13.8 5.5s-10.1-2-13.8-5.5L135.1 294.6c-4.5-4.2-7.1-10.1-7.1-16.3c0-12.3 10-22.3 22.3-22.3l57.7 0 0-96c0-17.7 14.3-32 32-32l32 0c17.7 0 32 14.3 32 32l0 96 57.7 0c12.3 0 22.3 10 22.3 22.3c0 6.2-2.6 12.1-7.1 16.3z"/></svg> 
+                         {% else %}
+                          <svg xmlns="http://www.w3.org/2000/svg" style="height: 20px;box-shadow: rgba(7, 255, 197, 0.2) 0px 7px 29px 0px;" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#4c00ff" d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z"/></svg>
+                        {% endif %}
+                    </td>
+                    <td> <span class="span_title">R$</span> {{ transacao[3] }}</td>
+                    <td>{{ transacao[4] }}</td>
+                    <td  class="overflow-cell">{{ transacao[5] }}</td>
+                    <td>{{ transacao[6] }}</td>
+                    <td>
+                        {% if transacao[7] == 'PIX' %}
+                      <div title="Pix">  <svg xmlns="http://www.w3.org/2000/svg"height="30" viewBox="0 0 512 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path  title="PIX"  fill="#00d79e" d="M242.4 292.5C247.8 287.1 257.1 287.1 262.5 292.5L339.5 369.5C353.7 383.7 372.6 391.5 392.6 391.5H407.7L310.6 488.6C280.3 518.1 231.1 518.1 200.8 488.6L103.3 391.2H112.6C132.6 391.2 151.5 383.4 165.7 369.2L242.4 292.5zM262.5 218.9C256.1 224.4 247.9 224.5 242.4 218.9L165.7 142.2C151.5 127.1 132.6 120.2 112.6 120.2H103.3L200.7 22.76C231.1-7.586 280.3-7.586 310.6 22.76L407.8 119.9H392.6C372.6 119.9 353.7 127.7 339.5 141.9L262.5 218.9zM112.6 142.7C126.4 142.7 139.1 148.3 149.7 158.1L226.4 234.8C233.6 241.1 243 245.6 252.5 245.6C261.9 245.6 271.3 241.1 278.5 234.8L355.5 157.8C365.3 148.1 378.8 142.5 392.6 142.5H430.3L488.6 200.8C518.9 231.1 518.9 280.3 488.6 310.6L430.3 368.9H392.6C378.8 368.9 365.3 363.3 355.5 353.5L278.5 276.5C264.6 262.6 240.3 262.6 226.4 276.6L149.7 353.2C139.1 363 126.4 368.6 112.6 368.6H80.78L22.76 310.6C-7.586 280.3-7.586 231.1 22.76 200.8L80.78 142.7H112.6z"/></svg></div
+                    </td>
+                        {% elif transacao[7] == 'Cartão' %}
+                    <div title="Cartão">  <svg xmlns="http://www.w3.org/2000/svg"height="30"  viewBox="0 0 576 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#00E6EA" title="Cartão" d="M64 32C28.7 32 0 60.7 0 96v32H576V96c0-35.3-28.7-64-64-64H64zM576 224H0V416c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V224zM112 352h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm112 16c0-8.8 7.2-16 16-16H368c8.8 0 16 7.2 16 16s-7.2 16-16 16H240c-8.8 0-16-7.2-16-16z"/></svg><div>
+                        {% elif transacao[7] == 'Boleto' %}
+                        <div title="Boleto">     <svg xmlns="http://www.w3.org/2000/svg"height="30"  viewBox="0 0 640 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path title="Boleto" fill="#00BFEA" d="M535 41c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l64 64c4.5 4.5 7 10.6 7 17s-2.5 12.5-7 17l-64 64c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l23-23L384 112c-13.3 0-24-10.7-24-24s10.7-24 24-24l174.1 0L535 41zM105 377l-23 23L256 400c13.3 0 24 10.7 24 24s-10.7 24-24 24L81.9 448l23 23c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0L7 441c-4.5-4.5-7-10.6-7-17s2.5-12.5 7-17l64-64c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9zM96 64H337.9c-3.7 7.2-5.9 15.3-5.9 24c0 28.7 23.3 52 52 52l117.4 0c-4 17 .6 35.5 13.8 48.8c20.3 20.3 53.2 20.3 73.5 0L608 169.5V384c0 35.3-28.7 64-64 64H302.1c3.7-7.2 5.9-15.3 5.9-24c0-28.7-23.3-52-52-52l-117.4 0c4-17-.6-35.5-13.8-48.8c-20.3-20.3-53.2-20.3-73.5 0L32 342.5V128c0-35.3 28.7-64 64-64zm64 64H96v64c35.3 0 64-28.7 64-64zM544 320c-35.3 0-64 28.7-64 64h64V320zM320 352a96 96 0 1 0 0-192 96 96 0 1 0 0 192z"/></svg> </div>
+                     {% elif transacao[7] == 'Cheque' %}
+                     <div title="Cheque">   <svg xmlns="http://www.w3.org/2000/svg" height="30" viewBox="0 0 576 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path  title="Cheque"  fill="#9800EA" d="M64 64C28.7 64 0 92.7 0 128V384c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H64zm48 160H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zM96 336c0-8.8 7.2-16 16-16H464c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16zM376 160h80c13.3 0 24 10.7 24 24v48c0 13.3-10.7 24-24 24H376c-13.3 0-24-10.7-24-24V184c0-13.3 10.7-24 24-24z"/></svg> </div>
+                        {% elif transacao[7] == 'Dinheiro' %}
+                        <div title="Dinheiro"> <svg xmlns="http://www.w3.org/2000/svg" height="30"viewBox="0 0 576 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path  title="Dinheiro"  fill="#EA006E" d="M64 64C28.7 64 0 92.7 0 128V384c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H64zm64 320H64V320c35.3 0 64 28.7 64 64zM64 192V128h64c0 35.3-28.7 64-64 64zM448 384c0-35.3 28.7-64 64-64v64H448zm64-192c-35.3 0-64-28.7-64-64h64v64zM288 160a96 96 0 1 1 0 192 96 96 0 1 1 0-192z"/></svg> </div>
+                        {% endif %}
+                    </td>
+
+                    <td>      
+                        <form action="{{ url_for('apagar_transacao', id=transacao[0]) }}" onsubmit="return confirm('Tem certeza que deseja excluir este produto? Esta ação nao pode ser revertida!');" method="POST">
+            
+                            <button class="button_trash" onclick="apagarTransacao" title="Clique para excluir">
+                                <i class='bx bx-trash-alt'></i>
+                            </button>
+                            
+                        </form>
+                    </td>
+
+                {% endfor %}
+
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+
+  <!--Modais -->
+
+  <div class="offcanvas offcanvas-end bg-black-dark text-light" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Adicionando Transação</h5>
+      <button type="button" class="btn-close text-light bg-light" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form id="addTransactionForm" action="/adicionar_transacao" method="post">
+            <div class="mb-3">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome_transacao" name="nome_transacao" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="nome">Tipo:</label>
+                <select name="tipo_transacao" class="form-select" id="tipo_transacao" required>
+                    <option value=""></option>
+                    <option value="Despesa">Despesa</option>
+                    <option value="Receita">Receita</option>
+                    <option value="Anotação">Anotação</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="nome">Valor:</label>
+                <input type="number" id="valor_transacao" name="valor_transacao" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="nome">Observação:</label>
+                <input type="text" id="observacao_transacao" name="observacao_transacao" class="form-control"> 
+            </div>
+            <div class="mb-3">
+              <label for="data_lancamento">Data de Lançamento:</label>
+              <input type="date" id="data_lancamento" name="data_lancamento" class="form-control" value="{{ data_atual }}" required>
+          </div>
+
+            <div class="mb-3">
+                <label for="nome">Pagamento Referente a:</label>
+                <input type="text" id="referente_transacao" name="referente_transacao" class="form-control" required> 
+            </div>
+            <div class="mb-3">
+                <label for="form_pag">Forma de Recebimento/Pagamento:</label>
+                <select name="form_pag" class="form-select" id="form_pag" required>
+                    <option value=""></option>
+                    <option value="PIX">Pix</option>
+                    <option value="Cartão">Cartão</option>
+                    <option value="Boleto">Boleto</option>
+                    <option value="Cheque">Cheque</option>
+                    <option value="Dinheiro">Dinheiro</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-modal text-light" type="submit" style="font-family: 'Astromax Regular', sans-serif;">Adicionar</button>
+            </div>
+        </form>
+    </div>
+  </div>
+
+  <!--Modais -->
+<div class="offcanvas offcanvas-end bg-black-dark text-light" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="filter" aria-labelledby="filterLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="filterLabel">Filtrando Transações</h5>
+    <button type="button" class="btn-close text-light bg-light" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+
+    <div class="offcanvas-body">
+       <form id="filterTransactionForm" action="{{ url_for('tabela') }}"  method="GET"> 
+        <div class="row d-flex">
+            <div class="mb-3">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome_transacao" name="nome_transacao"  class="form-control" placeholder="Digite o termo de perquisa">
+            </div>
+            <div class="mb-3">
+                <label for="nome">Tipo:</label>
+                <select name="tipo_transacao" class="form-control" id="tipo_transacao">
+                    <option value="all"></option>
+                    <option value="Despesa">Desepesa</option>
+                    <option value="Receita">Receita</option>
+                    <option value="Anotação">Anotação</option>
+                </select>
+            </div>
+        </div>
+    <hr>
+        <div class="row d-flex">
+            <div class="mb-3">
+                <label for="valor_transacao">Valor:</label>
+                <input type="number" id="valor_transacao" name="valor_transacao" class="form-control" placeholder="Digite o termo de perquisa">
+            </div>
+            <div class="mb-3">
+                <label for="nome">Observação:</label>
+                <input type="text" id="observacao_transacao" name="observacao_transacao" class="form-control" placeholder="Digite o termo de perquisa">
+            </div>
+        </div>
+    <hr>
+
+        <div class="row d-flex">
+            <div class="mb-3">
+                <label for="nome">Data de lanc.:</label>
+                <input type="date" id="data_lancamento" name="data_lancamento"  class="form-control" placeholder="Digite o termo de perquisa">
+            </div>
+            <div class="mb-3">
+                <label for="nome">Pagamento Referente a:</label>
+                <input type="text" id="referente_transacao" name="referente_transacao"  class="form-control" placeholder="Digite o termo de perquisa">
+            </div>
+        </div>
+    <hr>
+
+        <div class="row d-flex">
+            <div class="mb-3">
+                <label for="nome">Forma de Recb/Pagm.</label>
+                <select name="form_pag" class="form-control" id="form_pag">
+                    <option value=""></option>
+                    <option value="PIX">Pix</option>
+                    <option value="Cartão">Cartão</option>
+                    <option value="Boleto">Boleto</option>
+                    <option value="Cheque">Cheque</option>
+                    <option value="Dinheiro">Dinheiro</option>
+
+                </select>
+            </div>
+            <div class="mb-3">
+                <button class="btn-modal btn"  style="    font-family: 'Astromax Regular', sans-serif;color: white;" type="submit" title="Clique para Filtrar">Filtrar </button>
+
+            </div>
+        </div>
+    </form>
+    </div>
+  </div>
+
+
+
+<script>
+    $(document).ready(function(){
+  var zindex = 10;
+  
+  $("div.card").click(function(e){
+    e.preventDefault();
+
+    var isShowing = false;
+
+    if ($(this).hasClass("d-card-show")) {
+      isShowing = true
+    }
+
+    if ($("div.dashboard-cards").hasClass("showing")) {
+      // a card is already in view
+      $("div.card.d-card-show")
+        .removeClass("d-card-show");
+
+      if (isShowing) {
+        // this card was showing - reset the grid
+        $("div.dashboard-cards")
+          .removeClass("showing");
+      } else {
+        // this card isn't showing - get in with it
+        $(this)
+          .css({zIndex: zindex})
+          .addClass("d-card-show");
+
+      }
+
+      zindex++;
+
+    } else {
+      // no dashboard-cards in view
+      $("div.dashboard-cards")
+        .addClass("showing");
+      $(this)
+        .css({zIndex:zindex})
+        .addClass("d-card-show");
+
+      zindex++;
+    }
+    
+  });
+});
+
+        document.getElementById("data_lancamento").value = new Date().toISOString().substr(0,10);
+</script>
+<script>
+    $(document).ready(function(){
+      $(".btn-modal").click(function(){
+        location.reload();
+      });
+    });
+    $(document).ready(function(){
+      $(".btn-reaload").click(function(){
+        location.reload();
+      });
+    });
+  </script>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

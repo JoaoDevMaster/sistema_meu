@@ -1,0 +1,46 @@
+vendas.html:
+
+
+form:
+    npome (select)
+    email
+    CPF
+    numero de parcelas (12 padrao)
+    tipo de venda (renovação, venda)
+    confirma se pode ou nao fazer venda
+
+# nome = request.form.get('nome_cliente')
+# email = request.form.get('email')
+# cpf = request.form.get('cpf')
+# parcelas = request.form.get('numero_parcelas')
+# tipo = request.form.get('tipo_venda')
+# data_str = request.form.get('data_lancamento')
+
+    ________
+    
+tabela
+    vendas:
+    nome
+    CPF
+    email
+    numero de parcelas gerada
+    tipo: vendas ou renovação
+    numero de parcela pagas
+
+
+
+SQL:
+    CREATE TABLE IF NOT EXISTS vendas(
+        id PRIMARY KEY,
+        nome_cliente TEXT NOT NULL,
+        email TEXT NOT NULL,
+        cpf TEXT NOT NULL,
+        num_parcelas TEXT NOT NULL,
+        tipo_venda TEXT NOT NULL
+    )
+___________________________________________________
+
+Pessoas e empresa:
+    usuario e senha (cpf sem ponto ou traço)
+    acesso no painel (Sim ou nao)
+    anexos tmb

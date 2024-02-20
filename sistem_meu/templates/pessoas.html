@@ -1,0 +1,450 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>João Transações</title>
+  <link rel="stylesheet" href="static/styles.css">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap" rel="stylesheet">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  <link rel="shortcut icon" href="/static/favicon_io/favicon.ico" type="image/x-icon">
+  <style>
+    .bg-black-dark{
+    background-color: #121212;
+    color: white;
+}
+    a:hover{
+    color: white;
+    text-decoration: none;
+}
+          body {
+          background-color: #110070;
+          color: #fff;
+          font-family: 'Arial', sans-serif;
+      }
+
+      a {
+          color: white;
+          text-decoration: none;
+      }
+/* Estilo para o offcanvas */
+.offcanvass {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      width: 300px;
+      background-color: #fff;
+      box-shadow: -2px 0 6px rgba(0,0,0,0.1);
+      transform: translateX(100%);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .offcanvass.open {
+      transform: translateX(0);
+    }
+
+    .offcanvass-content {
+      padding: 20px;
+    }
+.link_nav_active{
+  background-color: #00ff91;
+}
+    /* Estilo para a barra lateral */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      padding: 48px 0 0;
+      margin-top: auto;
+      box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+    }
+
+    /* Estilo para o conteúdo principal */
+    .content {
+      margin-left: 250px;
+      padding: 20px;
+    }
+
+    /* Estilos específicos para dispositivos móveis */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        position: relative;
+        padding-top: 56px; /* Ajuste conforme necessário */
+      }
+      .content {
+        margin-left: 0;
+        padding: 10px;
+      }
+      /* Outros ajustes de estilo */
+    }
+  </style>
+
+<!-- SCRIPTS -->
+<script>
+    function openModal() {
+        document.getElementById('addTransactionModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('addTransactionModal').style.display = 'none';
+    }
+
+    function openFilterModal() {
+        document.getElementById('filterModal').style.display = 'flex';
+    }
+
+    function closeFilterModal() {
+        document.getElementById('filterModal').style.display = 'none';
+    }
+
+
+    
+    // Close modais ao clicar fora da área do modal
+    window.onclick = function (event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+        }
+    };
+
+// Adiciona classes condicionais com base no valor do saldo
+var saldo = parseFloat(document.getElementById('saldo').innerText);
+var saldoCard = document.getElementById('saldoCard');
+var receitasCard = document.getElementById('receitasCard');
+var despesasCard = document.getElementById('despesasCard');
+
+if (saldo > 0) {
+    saldoCard.classList.add('positive');
+    receitasCard.style.fill = '#00ffbf';  // Altera a cor para verde
+    despesasCard.style.fill = '#ff0044';   // Altera a cor para vermelho
+} else if (saldo < 0) {
+    saldoCard.classList.add('negative');
+    receitasCard.style.fill = '#00ffbf';  // Altera a cor para verde
+    despesasCard.style.fill = '#ff0044';   // Altera a cor para vermelho
+} else {
+    saldoCard.classList.add('zero');
+    receitasCard.style.fill = '#8c00ff';  // Mantém a cor roxa
+    despesasCard.style.fill = '#8c00ff';  // Mantém a cor roxa
+}
+
+</script>
+</head>
+<body>
+<!-- Adicione este conteúdo dentro do seu formulário principal -->
+<div class="buttons_positions ml-5">
+    <button class="button_position" title="Filtrar" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling"><svg style="height: 30px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="white" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg></button>
+
+    <button id="openEditModalBtn" class="edit-button" style="background:#891affa7; border:1px solid #891aff; display:none"></button>
+  </div>
+
+
+
+</div>
+  <div class="container-fluid">
+    <div class="row">
+
+
+      <!-- Barra lateral -->
+      <nav class="col-md-3 col-lg-2 d-md-block  sidebar">
+        <div class="logo_nav">
+          <img src="/static/logo.png" style="height:150px" alt="">
+      </div>
+        <div class="sidebar-sticky">
+          <ul class="nav flex-column">
+            <div class="d-flex links_nav ">
+                <a href="{{ url_for('index') }}"  title="DashBoard">
+                    <i class='bx bxs-objects-horizontal-left icon-side'></i>
+                    <span>DashBoard</span>
+                </a>
+            </div>
+    
+            <div class="d-flex links_nav ">
+                <a href="{{ url_for('tabela') }}" title="Transações">
+    
+                    <i class='bx bxs-bank icon-side'></i>
+                    <span>Transações</span>
+    
+                </a>
+            </div>
+    
+            <div class="d-flex links_nav icon_active">
+                <a href="/pessoas_empresas" title="Pessoas Ou Empresas">
+                    <i class='bx bx-user-pin icon-side'></i>
+                    <span>Pessoas</span>
+    
+                </a>
+            </div>
+            <div class="d-flex links_nav">
+                <a href="/templates" title="Templates">
+                    <i class='bx bx-file-find icon-side '></i>
+                    <span>Templates</span>
+    
+                </a>
+            </div>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Conteúdo principal -->
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 content">
+  
+          
+        <div class=" header">Pessoas e Empresas</div>
+        <br>
+
+          
+          <br>
+
+        <div class="table-responsive">
+          <table class="table table-striped bg-light text-center">
+            <thead >
+                <tr style="color: #4c00ff;">
+                    <th style="color: #4c00ff;"><span>ID</span>
+                    <th style="color: #4c00ff;"><span>Nome</span></th>
+                    <th style="color: #4c00ff;"><span>Classificação</span></th>
+                    <th style="color: #4c00ff;"><span>Contato</span></th>
+                    <th style="color: #4c00ff;"><span>E-mail</span></th>
+                    <th style="color: #4c00ff;"><span>Ação</span></th>
+
+
+
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Iteração sobre os dados das pessoas -->
+                {% for person in people %}
+                <tr>
+                    <td>{{ person[0] if person[0] else "-" }}</td>
+                    <td>{{ person[1] if person[1] else "-" }}</td>
+                    <td>{{ person[9] if person[9] else "-" }}</td>
+                    <td>{{ person[4] if person[4] else "-" }}</td>
+                    <td>{{ person[7] if person[7] else "-" }}</td>
+                    <td>
+                        <button class="edit-button" onclick="openEditOffcanvas('{{ person[0] }}', '{{ person[1] }}', '{{ person[2] }}', '{{ person[3] }}', '{{ person[4] }}', '{{ person[5] }}', '{{ person[6] }}', '{{ person[7] }}', '{{ person[8] }}', '{{ person[9] }}')" data-bs-toggle="offcanvas" data-bs-target="#editOffcanvas">
+                            <svg style="height: 20px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="white" d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z"/></svg>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            
+            
+          </table>
+        </div>
+      </main>
+    </div>
+  </div><!-- Offcanvas para adicionar pessoa ou empresa -->
+
+  <div class="offcanvas offcanvas-end bg-black-dark text-light" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="editOffcanvas" aria-labelledby="offcanvasScrollingLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Editar Cadastro</h5>
+        <button type="button" class="btn-close text-light bg-light" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form id="editForm" method="post" action="/editar">
+            <div class="mb-3">
+                <label for="name">Nome: <span class="text-danger">*</span></label>
+                <input type="text" id="name" class="form-control" name="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="cpf">CPF:</label>
+                <input type="text" id="cpf" class="form-control" name="cpf">
+            </div>
+            <div class="mb-3">
+                <label for="address">Endereço: <span class="text-danger">*</span></label>
+                <input type="text" id="address" class="form-control" name="address" required>
+            </div>
+            <div class="mb-3">
+                <label for="contact1">Contato 1:  <span class="text-danger">*</span></label>
+                <input type="text" id="contact1" class="form-control" name="contact1" required>
+            </div>
+            <div class="mb-3">
+                <label for="contact2">Contato 2:</label>
+                <input type="text" id="contact2" class="form-control" name="contact2">
+            </div>
+            <div class="mb-3">
+                <label for="contact3">Contato 3:</label>
+                <input type="text" id="contact3" class="form-control" name="contact3">
+            </div>
+            <div class="mb-3">
+                <label for="email">E-mail:  <span class="text-danger">*</span></label>
+                <input type="text" id="email" class="form-control" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="classification">Classificação:  <span class="text-danger">*</span></label>
+                <select id="classification" class="form-control" name="classification" required>
+                    <option value="Cliente">Cliente</option>
+                    <option value="Fornecedor">Fornecedor</option>
+                    <option value="Funcionário">Funcionário</option>
+                    <option value="Funcionário + Cliente">Funcionário + Cliente</option>
+                    <option value="Fornecedor + Cliente">Fornecedor + Cliente</option>
+                    <option value="Administrador">Administrador</option>
+                    <option value="Pré-Cadastro">Pré-Cadastro</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="observation">Observação:</label>
+                <textarea id="observation" class="form-control" name="observation"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-modal text-light" type="submit" style="font-family: 'Astromax Regular', sans-serif;">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+        
+
+
+<script>
+    $(document).ready(function(){
+  var zindex = 10;
+  
+  $("div.card").click(function(e){
+    e.preventDefault();
+
+    var isShowing = false;
+
+    if ($(this).hasClass("d-card-show")) {
+      isShowing = true
+    }
+
+    if ($("div.dashboard-cards").hasClass("showing")) {
+      // a card is already in view
+      $("div.card.d-card-show")
+        .removeClass("d-card-show");
+
+      if (isShowing) {
+        // this card was showing - reset the grid
+        $("div.dashboard-cards")
+          .removeClass("showing");
+      } else {
+        // this card isn't showing - get in with it
+        $(this)
+          .css({zIndex: zindex})
+          .addClass("d-card-show");
+
+      }
+
+      zindex++;
+
+    } else {
+      // no dashboard-cards in view
+      $("div.dashboard-cards")
+        .addClass("showing");
+      $(this)
+        .css({zIndex:zindex})
+        .addClass("d-card-show");
+
+      zindex++;
+    }
+    
+  });
+});
+</script>
+<!-- Função JavaScript para abrir o offcanvas de edição -->
+<script>
+    function openEditOffcanvas(id, name, cpf, address, contact1, contact2, contact3, email, observation, classification) {
+        document.getElementById("editForm").setAttribute("action", "/editar/" + id);
+        document.getElementById("name").value = name;
+        document.getElementById("cpf").value = cpf;
+        document.getElementById("address").value = address;
+        document.getElementById("contact1").value = contact1;
+        document.getElementById("contact2").value = contact2;
+        document.getElementById("contact3").value = contact3;
+        document.getElementById("email").value = email;
+        document.getElementById("observation").value = observation;
+        document.getElementById("classification").value = classification;
+    }
+    document.getElementById('openAddOffcanvasBtn').addEventListener('click', function () {
+        var addOffcanvas = new bootstrap.Offcanvas(document.getElementById('addOffcanvas'));
+        addOffcanvas.show();
+    });
+
+</script>
+<!--Modais -->
+
+<div class="offcanvas offcanvas-end bg-black-dark text-light" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Adicionando Pessoas</h5>
+      <button type="button" class="btn-close text-light bg-light" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form id="addForm" method="post">
+                
+                <div class="mb-3">
+                    <label for="name">Nome:  <span class="text-danger">*</span></label>
+                    <input type="text" id="name" class="form-control" name="name" required>
+                <div class="mb-3">
+                    <label for="cpf">CPF:</label>
+                    <input type="text" id="cpf"  class="form-control"name="cpf">
+                </div>
+                <div class="mb-3">
+                    <label for="address">Endereço:  <span class="text-danger">*</span></label>
+                    <input type="text" id="address" class="form-control" name="address" required>
+                </div>
+                <div class="mb-3">
+                    <label for="contact1">Contato 1:  <span class="text-danger">*</span></label>
+                    <input type="text" id="contact1" class="form-control" name="contact1" required>
+                </div>
+                <div class="mb-3">
+                    <label for="contact2">Contato 2:</label>
+                    <input type="text" id="contact2"  class="form-control"name="contact2">
+                </div>
+                <div class="mb-3">
+                    <label for="contact3">Contato 3:</label>
+                    <input type="text" id="contact3"  class="form-control"name="contact3">
+                </div>
+                <div class="mb-3">
+                    <label for="email">E-mail:  <span class="text-danger">*</span></label>
+                    <input type="text" id="email"  class="form-control"name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="classification">Classificação:  <span class="text-danger">*</span></label>
+                    <select id="classification" name="classification" class="form-control" required>
+                        <option value="Cliente">Cliente</option>
+                        <option value="Fornecedor">Fornecedor</option>
+                        <option value="Funcionário">Funcionário</option>
+                        <option value="Funcionário + Cliente">Funcionário + Cliente</option>
+                        <option value="Fornecedor + Cliente">Fornecedor + Cliente</option>
+                        <option value="Administrador">Administrador</option>
+                        <option value="Pré-Cadastro">Pré-Cadastro</option>
+
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="observation">Observação:</label>
+                    <textarea id="observation"  class="form-control" name="observation"></textarea>
+                </div>
+
+            </div>
+            <br>
+            <div class="modal-footer">
+                <button class="btn btn-modal text-light" type="submit" style="    font-family: 'Astromax Regular', sans-serif;">Adicionar</button>
+            </div>
+        </form>
+    </div>
+  </div>
+
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
